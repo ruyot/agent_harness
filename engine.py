@@ -1,4 +1,3 @@
-
 from minigrid.minigrid_env import MiniGridEnv
 from minigrid.core.grid import Grid
 from minigrid.core.mission import MissionSpace
