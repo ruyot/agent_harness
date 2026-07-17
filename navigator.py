@@ -67,17 +67,18 @@ def _parse_actions(output: str) -> list[str]:
 # Navigation
 def navigate(env, spec, client, verifier):
     # Execution and verification, Returns (success, trace).
-    obs, _ = env.reset()
+    env.reset()
     prompt = PLAN_PROMPT.format(grid=describe_full(env), mission=spec["mission"])
 
     plan = _parse_actions(client.complete(prompt))
-    trace = {"plan": prompt, "steps": [], "success": False}
+    trace = {"plan": plan, "steps": [], "success": False}
 
     for name in plan:
         if name not in ACTION_MAP:
             trace["steps"].append({"action": name, "error": "unknown action"})
             continue
-        obs, reward, terminated, truncated, info = env.step(ACTION_MAP[name])
+        # Only need terminated and truncated observability we check ourselves in the verifier
+        _, _, terminated, truncated, _ = env.step(ACTION_MAP[name])
         verifier.observe(env)
         trace["steps"].append({
             "action": name,
