@@ -12,7 +12,7 @@ class LLMClient(ABC):
 
 class GeminiClient(LLMClient):
     """Using Gemini's free tier API"""
-    def __init__(self, model="gemini-3.5-flash"):
+    def __init__(self, model="gemini-3.1-flash-lite"):
         from google import genai
         self.client = genai.Client()
         self.model = model

@@ -16,6 +16,7 @@ OUTPUT: a single JSON object no prose, no markdown fences. Use the following Sch
 "mission": "<short description of the objective>",
 "agent_spawn": {{"pos": [x, y], "dir": <0=east,1=south,2=west,3=north>}},
 "objects": [{{"type": "<type>", "pos": [x, y], "color": "<color>"}}]
+"objective": {{"type": "<reach_goal|pickup|reach_avoiding|sequence>", "color": "<color, only if the objective involves a specific item>"}}
 }}
 
 RULES (required):
@@ -26,7 +27,11 @@ x and y must be between 1 and grid_size-2 inclusive.
 - Exactly ONE object of type "goal".
 - No two objects on the same cell, the agent must not spawn on an object.
 - The goal must be reachable from the spawn (do not fully wall it off)
-
+- Set "objective" to match the task:
+  - just reach a goal = {{"type": "reach_goal"}}
+  - pick up a specific item = {{"type": "pickup", "color": "<item color>"}}
+  - reach a goal while avoiding lava = {{"type": "reach_avoiding"}}
+  - pick up an item AND then reach the goal = {{"type": "sequence", "color": "<item color>"}}
 Return only the JSON object."""
 
 REPAIR_PROMPT = """The JSON you produced was invalid. Errors include:

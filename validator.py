@@ -64,4 +64,14 @@ def validate_spec(spec: dict) -> list[str]:
     if not has_goal:
         errors.append("spec has no goal object")
 
+    # Check objective
+    VALID_OBJECTIVES = {"reach_goal", "pickup", "reach_avoiding", "sequence"}
+    obj = spec.get("objective")
+    if obj is None:
+        errors.append("missing 'objective' field")
+    elif obj.get("type") not in VALID_OBJECTIVES:
+        errors.append(f"objective type must be one of {VALID_OBJECTIVES}, got {obj.get('type')}")
+    elif obj["type"] in ("pickup", "sequence") and obj.get("color") not in VALID_COLORS:
+        errors.append(f"objective '{obj['type']}' requires a valid color, got {obj.get('color')}")
+
     return errors
