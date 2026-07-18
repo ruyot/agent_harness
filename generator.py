@@ -2,6 +2,7 @@
 Turns a natural language command into a valid scene spec.
 Process: command -> prompt -> LLM -> parse JSON -> validate -> (repair/retry if needed) -> spec
 """
+import re
 import json
 from validator import validate_spec
 from primitive_vocabulary import VALID_TYPES, VALID_COLORS
@@ -15,7 +16,7 @@ OUTPUT: a single JSON object no prose, no markdown fences. Use the following Sch
 "grid_size": <int, 6-12>,
 "mission": "<short description of the objective>",
 "agent_spawn": {{"pos": [x, y], "dir": <0=east,1=south,2=west,3=north>}},
-"objects": [{{"type": "<type>", "pos": [x, y], "color": "<color>"}}]
+"objects": [{{"type": "<type>", "pos": [x, y], "color": "<color>"}}],
 "objective": {{"type": "<reach_goal|pickup|reach_avoiding|sequence>", "color": "<color, only if the objective involves a specific item>"}}
 }}
 
@@ -40,15 +41,23 @@ REPAIR_PROMPT = """The JSON you produced was invalid. Errors include:
 What was produced by you:
 {previous}
 
+Fix ALL listed errors. If the goal is "not reachable", you have placed too many walls and sealed it off. 
+You must remove several walls to open a clear, connected path from the agents spawn to the goal. Prefer fewer walls over a dense maze.
 Return a corrected single JSON object that fixes all listed errors. No prose, no markdown fences."""
 
 def _parse(output: str) -> dict:
     # Extracting a JSON object from the model's text
     output = output.strip()
-    if output.startswith("```"):
-        output = output.split("```")[1]
+    if "```" in output:
+        parts = output.split("```")
+        output = max(parts, key=len)
         if output.startswith("json"):
             output = output[4:]
+        output = output.strip()
+    # Extract JSON object even if surronded by prose
+    match = re.search(r"\{.*\}", output, re.DOTALL)
+    if match:
+        output = match.group(0)
     return json.loads(output)
 
 def generate_spec(command: str, client, max_repairs: int = 3):
