@@ -3,6 +3,7 @@ Checks if a scene spec is legal before it reaches the engine.
 Bad specs can be caught and repaired rather than crashing and producing broken environments.
 """
 from primitive_vocabulary import PRIMITIVES, VALID_COLORS, VALID_TYPES
+from collections import deque
 
 def validate_spec(spec: dict) -> list[str]:
     """Returns a list of error strings. Empty list == valid spec."""
@@ -74,4 +75,50 @@ def validate_spec(spec: dict) -> list[str]:
     elif obj["type"] in ("pickup", "sequence") and obj.get("color") not in VALID_COLORS:
         errors.append(f"objective '{obj['type']}' requires a valid color, got {obj.get('color')}")
 
+    if not errors:
+        errors.extend(_check_reachability(spec))
+
     return errors
+
+# Reliability check that confirms the goal is reachable in the agent generated spec
+def _check_reachability(spec: dict) -> list[str]:
+    # Flood fill from spawn
+    size = spec["grid_size"]
+
+    # Building a set of blocked interior cells (walls + lava).
+    blocked = set()
+    goal_pos = None
+    for obj in spec["objects"]:
+        pos = tuple(obj["pos"])
+        if obj["type"] in ("wall", "lava"):
+            blocked.add(pos)
+        elif obj["type"] == "goal":
+            goal_pos = pos
+
+    if goal_pos is None:
+        return []
+    
+    start = tuple(spec["agent_spawn"]["pos"])
+
+    seen = {start}
+    queue = deque([start])
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) == goal_pos:
+            return []
+        # Check each of the four neighbours of the position that was just popped
+        # Directional x,y
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            # Get the neighbours actual coordinate by adding the offset to the current position (what was popped)
+            nx, ny = x + dx, y + dy
+            # Bounds check
+            if not (1 <= nx <= size - 2 and 1 <= ny <= size - 2):
+                continue
+            # If its blocked or seen already continue
+            if (nx, ny) in blocked or (nx, ny) in seen:
+                continue
+            # Surviving both checks means its a new cell mark it seen and add to queue
+            seen.add((nx, ny))
+            queue.append((nx, ny))
+    
+    return [f"goal at {goal_pos} is not reachable from spawn {start} (walled off)"]
