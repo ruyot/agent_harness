@@ -3,6 +3,7 @@ Drives an agnet through an environment specification to satify the spec's delcar
 For a first pass, full observability is implemented.
 """
 import json
+import time
 from minigrid.core.actions import Actions
 
 # Mapping text to valid MiniGrid actions
@@ -64,14 +65,21 @@ def _parse_actions(output: str) -> list[str]:
             output = output[4:]
     return json.loads(output)
 
-# Navigation
-def navigate(env, spec, client, verifier):
-    # Execution and verification, Returns (success, trace).
+# Generate the full action list from the environment view
+def plan_navigation(env, spec, client):
     env.reset()
     prompt = PLAN_PROMPT.format(grid=describe_full(env), mission=spec["mission"])
-
     plan = _parse_actions(client.complete(prompt))
+    return plan
+
+ # Execution and verification, run the plan against the engine
+def navigate(env, plan, verifier, render=False, delay=0.4):
+    env.reset()
     trace = {"plan": plan, "steps": [], "success": False}
+    
+    if render:
+        env.render()
+        time.sleep(delay)
 
     for name in plan:
         if name not in ACTION_MAP:
@@ -80,6 +88,11 @@ def navigate(env, spec, client, verifier):
         # Only need terminated and truncated observability we check ourselves in the verifier
         _, _, terminated, truncated, _ = env.step(ACTION_MAP[name])
         verifier.observe(env)
+
+        if render:
+            env.render()
+            time.sleep(delay)
+
         trace["steps"].append({
             "action": name,
             "agent_pos": tuple(env.agent_pos),
