@@ -34,6 +34,9 @@ Colours: `red`, `green`, `blue`, `purple`, `yellow`, `grey`.
 The agent's actions are: turn left, turn right, move forward, pick up, drop, toggle
 (open a door / box), and done. It can carry only one item at a time.
 
+The agent has a facing direction (`dir`: 0=east, 1=south, 2=west, 3=north).
+Movement is egocentric, so "forward" follows the facing and "left"/"right" only turn.
+
 Doors are unlocked by default (similar style to MiniGrid) however it is up to the model to set "locked": true to create a locked door that requires a key to access.
 
 ## Quick start
