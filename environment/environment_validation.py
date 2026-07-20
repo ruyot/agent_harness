@@ -2,7 +2,7 @@
 Checks if a scene spec is legal before it reaches the engine.
 Bad specs can be caught and repaired rather than crashing and producing broken environments.
 """
-from primitive_vocabulary import PRIMITIVES, VALID_COLORS, VALID_TYPES
+from environment.primitive_vocabulary import PRIMITIVES, VALID_COLORS, VALID_TYPES
 from collections import deque
 
 def validate_spec(spec: dict) -> list[str]:

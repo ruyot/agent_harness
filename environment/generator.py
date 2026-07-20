@@ -4,8 +4,8 @@ Process: command -> prompt -> LLM -> parse JSON -> validate -> (repair/retry if 
 """
 import re
 import json
-from validator import validate_spec
-from primitive_vocabulary import VALID_TYPES, VALID_COLORS
+from environment.environment_validation import validate_spec
+from environment.primitive_vocabulary import VALID_TYPES, VALID_COLORS
 
 GENERATION_PROMPT = """You are generating a 2D grid-world environment as JSON.
 

@@ -1,10 +1,10 @@
 """End-to-end generation"""
 import sys
 from client import GeminiClient
-from generator import generate_spec
-from engine import SpecEnv
-from verifier import Verifier
-from navigator import plan_navigation, navigate
+from environment.generator import generate_spec
+from environment.engine import SpecEnv
+from navigation.navigation_validation import Verifier
+from navigation.navigator import plan_navigation, navigate
 from dotenv import load_dotenv
 from client import AnthropicClient
 
