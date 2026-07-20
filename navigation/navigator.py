@@ -126,7 +126,7 @@ def navigate(env, plan, verifier, render=False, delay=0.4, start_pause=0):
 
         trace["steps"].append({
             "action": name,
-            "agent_pos": tuple(env.agent_pos),
+            "agent_pos": tuple(int(c) for c in env.agent_pos),
             "terminated": terminated, "truncated": truncated,
         })
         if terminated or truncated:
