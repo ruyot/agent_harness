@@ -17,7 +17,7 @@ OUTPUT: a single JSON object no prose, no markdown fences. Use the following Sch
 "mission": "<short description of the objective>",
 "agent_spawn": {{"pos": [x, y], "dir": <0=east,1=south,2=west,3=north>}},
 "objects": [{{"type": "<type>", "pos": [x, y], "color": "<color>"}}],
-"objective": {{"type": "<reach_goal|pickup|reach_avoiding|sequence>", "color": "<color, only if the objective involves a specific item>"}}
+"objective" (JSON object) {{"type": "<reach_goal|pickup|reach_avoiding|sequence>", "color": "<color, only if the objective involves a specific item>"}}
 }}
 
 RULES (required):

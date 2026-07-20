@@ -26,7 +26,7 @@ class GeminiClient(LLMClient):
 
 # Anthropic
 class AnthropicClient(LLMClient):
-    def __init__(self, model="claude-sonnet-4-6"):
+    def __init__(self, model="claude-fable-5"):
         import anthropic
         self.client = anthropic.Anthropic()
         self.model = model
@@ -34,10 +34,13 @@ class AnthropicClient(LLMClient):
     def complete(self, prompt: str) -> str:
         msg = self.client.messages.create(
             model=self.model,
-            max_tokens=2000,
+            max_tokens=4000,
             messages=[{"role": "user", "content": prompt}]
         )
-        return msg.content[0].text
+        for block in msg.content:
+            if block.type == "text":
+                return block.text
+        return ""
 
 class TestingClient(LLMClient):
     """Scripted responses to test generation and loop without API calls"""
