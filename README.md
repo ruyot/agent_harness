@@ -71,7 +71,7 @@ The pipeline for the harness is split into phases, each in its own group:
 The generator emits plain data and doesn't reference the engine. Only the adapter (`engine.py`) knows the engine,
 so retargeting to a different backend (e.g. a 3D engine) is a new adapter not a codebase rewrite.
 
-For a more in-depth discussion on design decisions, conclusions, and outcomes see [`DECISIONS.md`](DECISIONS.md).
+For a more in-depth discussion on design decisions, conclusions, and outcomes see [`Decisions.md`](Decisions.md).
 
 ## Limitations & observations
 - Full observability: The agent plans the whole action list up front with no execution feedback, so it can commit to a plan that walks into a wall.
