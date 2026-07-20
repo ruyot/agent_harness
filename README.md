@@ -10,6 +10,7 @@ into a runnable [MiniGrid](https://minigrid.farama.org/) environment. Minigrid i
 world that consists of walls, lava, keys, locked doors, and goals. Because the spec is separate from the engine, 
 the same generation and navigation pipeline can target other backends (e.g. a 3D MiniWorld adapter) by swapping only the adapter.
 
+### Multi Door 
 ![Multi Door Environment: the model designs and solves a multi door maze](assets/multi_door.gif)
 
 *Prompt: Create a maze with multiple doors, within the maze there should be multiple keys of matching colour to the doors, in order for the agent to reach the goal they must use the keys to go through subsequent doors and reach the goal.*
@@ -76,10 +77,15 @@ For a more in-depth discussion on design decisions, conclusions, and outcomes se
 Although the harness combats this through the use of retrying and redirecting the agent using its output, the next step would be partiall-observable navigation which is step-wise.
 
 # More Demos
+### "Something Difficult to Navigate"
 !["Something Difficult to Navigate"](assets/something_difficult.gif)
+### Key and Door
 ![Key & Door](assets/key_door.gif)
+### Key, Ball and Door
 ![Key, Ball & Door](assets/key_door_ball.gif)
+### Lava, Key and Door
 ![Lava, Key & Door](assets/lava_key_door.gif)
+### Winding Maze
 ![Winding Maze](assets/winding_maze.gif)
 
 # References
