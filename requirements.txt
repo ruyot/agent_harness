@@ -1,0 +1,6 @@
+minigrid
+anthropic
+google-genai
+python-dotenv
+pygame
+numpy
