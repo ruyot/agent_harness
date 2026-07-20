@@ -67,14 +67,15 @@ def validate_spec(spec: dict) -> list[str]:
 
     # Check objective
     VALID_OBJECTIVES = {"reach_goal", "pickup", "reach_avoiding", "sequence"}
-    obj = spec.get("objective")
-    if obj is None:
+    objective = spec.get("objective")
+    if objective is None:
         errors.append("missing 'objective' field")
-    elif obj.get("type") not in VALID_OBJECTIVES:
-        errors.append(f"objective type must be one of {VALID_OBJECTIVES}, got {obj.get('type')}")
-    elif obj["type"] in ("pickup", "sequence") and obj.get("color") not in VALID_COLORS:
-        errors.append(f"objective '{obj['type']}' requires a valid color, got {obj.get('color')}")
-
+    elif not isinstance(objective, dict):
+        errors.append(f"'objective' must be a JSON object like {{'type': 'reach_goal'}}, not a bare string; got {objective!r}")
+    elif objective.get("type") not in VALID_OBJECTIVES:
+        errors.append(f"objective type must be one of {VALID_OBJECTIVES}, got {objective.get('type')}")
+    elif objective["type"] in ("pickup", "sequence") and objective.get("color") not in VALID_COLORS:
+        errors.append(f"objective '{objective['type']}' requires a valid color, got {objective.get('color')}")
     if not errors:
         errors.extend(_check_reachability(spec))
 
